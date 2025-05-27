@@ -1,0 +1,43 @@
+### Crear una nueva cita
+POST http://127.0.0.1:5000/citas
+Content-Type: application/json
+
+{
+  "profesional_id": 101,
+  "cliente_id": 202
+}
+
+### Registrar un nuevo Cliente
+POST http://127.0.0.1:5000/usuarios/registrar
+Content-Type: application/json
+
+{
+  "tipo": "cliente",
+  "email": "cliente.nuevo@email.com",
+  "password": "password123"
+}
+
+###
+
+### Registrar un nuevo Profesional
+POST http://127.0.0.1:5000/usuarios/registrar
+Content-Type: application/json
+
+{
+  "tipo": "profesional",
+  "email": "dr.house@email.com",
+  "password": "password456"
+}
+
+### Confirmar la cita con ID 11
+POST http://127.0.0.1:5000/citas/11/confirmar
+
+###
+
+### Completar la cita con ID 4
+POST http://127.0.0.1:5000/citas/4/completar
+
+###
+
+### Cancelar la cita con ID 4 (esta fallará si ya está completada)
+POST http://127.0.0.1:5000/citas/4/cancelar
