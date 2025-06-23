@@ -74,7 +74,7 @@ Content-Type: application/json
 # 3. Ejecuta cada una de las 4 peticiones y compara los resultados.
 
 # 6a. Costo Base (sin decoradores)
-GET http://127.0.0.1:5000/citas/2/costo-detallado
+GET http://127.0.0.1:5000/citas/1/costo-detallado
 
 ###
 
@@ -90,3 +90,6 @@ GET http://127.0.0.1:5000/citas/2/costo-detallado?impuesto=true
 
 # 6d. Costo con Urgencia + Impuesto
 GET http://127.0.0.1:5000/citas/2/costo-detallado?urgencia=true&impuesto=true
+
+### VERIFICAR ESTADO DE UNA CITA ESPECÍFICA
+GET http://127.0.0.1:5000/citas/1

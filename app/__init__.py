@@ -4,6 +4,18 @@ from flask import Flask, request, jsonify, render_template
 # --- Importaciones Centrales y de Patrones ---
 from .database import db
 from .patterns.logger_singleton import Logger
+from .models import Cita, CitaBuilder, Usuario, Cliente, Profesional
+from .user_factory import UserFactory
+from .patterns.command.commands import (
+    ConfirmarCitaCommand,
+    CancelarCitaCommand,
+    CompletarCitaCommand,
+    CommandInvoker
+)
+from .patterns.facade.booking_facade import BookingFacade
+from .patterns.decorator.billing import ImpuestoDecorator, TarifaUrgenciaDecorator
+from .patterns.adapter.billing_adapter import CitaBillingAdapter
+from .patterns.proxy.command_proxy import CommandProxy
 
 def create_app():
     """
@@ -40,8 +52,10 @@ def create_app():
         # Crea todas las tablas definidas en models.py si no existen
         db.create_all()
 
-    # --- Instancia Única de Nuestro Logger (Singleton) ---
+    # --- Instancias Únicas Compartidas (Singleton e Invoker) ---
     logger = Logger()
+    # CAMBIO 1: Creamos UNA SOLA instancia del invocador para toda la app
+    invoker = CommandInvoker()
 
     # -------------------------------------------------------------------------
     # --- DEFINICIÓN DE RUTAS DE LA API ---
@@ -92,21 +106,39 @@ def create_app():
 
     # --- Rutas para Patrones de Comportamiento (State, Observer, Command, Proxy) ---
 
+    @app.route('/citas/<int:cita_id>', methods=['GET'])
+    def obtener_cita_por_id(cita_id):
+        """Devuelve los detalles de una cita específica."""
+        cita = Cita.query.get_or_404(cita_id)
+        return jsonify(cita.to_dict())
+
     @app.route('/citas/<int:cita_id>/confirmar', methods=['POST'])
     def confirmar_cita(cita_id):
         cita = Cita.query.get_or_404(cita_id)
         comando_real = ConfirmarCitaCommand(cita)
-        proxy = CommandProxy(comando_real, user_role="admin") # Simulamos un usuario admin
-        invoker = CommandInvoker()
+        proxy = CommandProxy(comando_real, user_role="admin")
+
+        # CAMBIO 2: Usamos el invocador compartido en lugar de crear uno nuevo
         invoker.set_command(proxy)
         invoker.execute_command()
+
         db.session.commit()
-        logger.log(f"Comando 'confirmar' (a través de Proxy) ejecutado en Cita ID: {cita.id}. Nuevo estado: {cita.estado}")
+        logger.log(
+            f"Comando 'confirmar' (a través de Proxy) ejecutado en Cita ID: {cita.id}. Nuevo estado: {cita.estado}")
         return jsonify(cita.to_dict())
 
     # (Las rutas para cancelar y completar usarían la misma estructura de Command y Proxy)
 
     # --- Rutas para Patrones Estructurales (Facade, Adapter, Decorator) ---
+
+    # --- NUEVA RUTA PARA DESHACER LA ÚLTIMA ACCIÓN ---
+    @app.route('/acciones/deshacer', methods=['POST'])
+    def deshacer_accion():
+        # CAMBIO 3: Llamamos al nuevo metodo de nuestro invocador compartido
+        invoker.undo_command()
+        db.session.commit()  # Guardamos el estado revertido en la BD
+        logger.log("Se ejecutó una acción de deshacer.")
+        return jsonify({"mensaje": "Última acción deshecha exitosamente."})
 
     @app.route('/reservas-completas', methods=['POST'])
     def crear_reserva_completa():

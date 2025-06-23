@@ -73,14 +73,40 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- Función para mostrar la respuesta en la página ---
+    // --- Lógica para el Botón de Deshacer (Command) ---
+    const undoButton = document.getElementById('undo-button');
+    undoButton.addEventListener('click', async () => {
+        // Hacemos la llamada a nuestro endpoint de deshacer
+        try {
+            const response = await fetch('/acciones/deshacer', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+                // No necesita cuerpo (body)
+            });
+
+            const result = await response.json();
+            displayResponse(result, response.status);
+
+        } catch (error) {
+            displayResponse({ error: 'Error de red o conexión' }, 500);
+        }
+    });
+
+    // --- Función de ayuda para mostrar la respuesta en la página ---
     function displayResponse(data, status) {
         const responseArea = document.getElementById('response-area');
-        responseArea.innerHTML = `<strong>Estado: <span class="math-inline">\{status\}</strong\>\\n\\n</span>{JSON.stringify(data, null, 2)}`;
+        // Usamos JSON.stringify con formato para que se vea bonito
+        responseArea.innerHTML = `<strong>Estado: ${status}</strong>\n\n${JSON.stringify(data, null, 2)}`;
+
+        // Cambiamos el color del borde si hay un error
         if (status >= 400) {
             responseArea.style.borderColor = 'red';
+            responseArea.style.color = 'red';
         } else {
-            responseArea.style.borderColor = '#ced4da';
+            responseArea.style.borderColor = '#4CAF50'; // Borde verde para éxito
+            responseArea.style.color = 'black';
         }
     }
 });
