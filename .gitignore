@@ -1,0 +1,12 @@
+# Entorno Virtual de Python
+.venv/
+venv/
+
+# Archivos de la base de datos SQLite
+*.db
+*.db-journal
+
+# Carpetas generadas por PyCharm y Python
+.idea/
+__pycache__/
+instance/

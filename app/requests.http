@@ -1,43 +1,92 @@
-### Crear una nueva cita
-POST http://127.0.0.1:5000/citas
-Content-Type: application/json
+# ===================================================================
+# >> FASE 1: PRUEBAS DE PATRONES CREACIONALES
+# ===================================================================
 
-{
-  "profesional_id": 101,
-  "cliente_id": 202
-}
-
-### Registrar un nuevo Cliente
+### 1. Factory Method: Registrar un nuevo Cliente
 POST http://127.0.0.1:5000/usuarios/registrar
 Content-Type: application/json
 
 {
   "tipo": "cliente",
-  "email": "cliente.nuevo@email.com",
+  "email": "nuevo.cliente@email.com",
   "password": "password123"
 }
 
-###
-
-### Registrar un nuevo Profesional
+### 2. Factory Method: Registrar un nuevo Profesional
 POST http://127.0.0.1:5000/usuarios/registrar
 Content-Type: application/json
 
 {
   "tipo": "profesional",
-  "email": "dr.house@email.com",
+  "email": "dr.garcia@email.com",
   "password": "password456"
 }
 
-### Confirmar la cita con ID 11
-POST http://127.0.0.1:5000/citas/11/confirmar
+### 3. Builder: Crear una nueva Cita
+POST http://127.0.0.1:5000/citas
+Content-Type: application/json
+
+{
+  "profesional_id": 2,
+  "cliente_id": 1
+}
+
+
+### <-- SEPARADOR
+
+# ===================================================================
+# >> FASE 2: PRUEBAS DE PATRONES DE COMPORTAMIENTO
+# ===================================================================
+
+### 4. State, Observer, Command y Proxy: Confirmar una Cita
+# INSTRUCCIONES:
+# 1. Ejecuta la petición #3 para crear una nueva cita y anota su ID.
+# 2. Reemplaza el <ID_DE_LA_CITA> en la URL de abajo con el ID que anotaste.
+# 3. Ejecuta esta petición y revisa la consola de PyCharm para ver todos los logs.
+POST http://127.0.0.1:5000/citas/1/confirmar
+
+
+### <-- SEPARADOR
+
+# ===================================================================
+# >> FASE 3: PRUEBAS DE PATRONES ESTRUCTURALES
+# ===================================================================
+
+### 5. Facade: Realizar una Reserva Completa
+POST http://127.0.0.1:5000/reservas-completas
+Content-Type: application/json
+
+{
+  "usuario": {
+    "email": "cliente.fachada.final@email.com",
+    "password": "password_facade"
+  },
+  "cita": {
+    "profesional_id": 2
+  }
+}
+
+
+### 6. Decorator y Adapter: Calcular Costos de una Cita
+# INSTRUCCIONES:
+# 1. Usa el ID de una cita que ya exista (puedes usar la que creaste en el paso #3 o #5).
+# 2. Reemplaza el <ID_DE_LA_CITA> en las 4 URLs de abajo.
+# 3. Ejecuta cada una de las 4 peticiones y compara los resultados.
+
+# 6a. Costo Base (sin decoradores)
+GET http://127.0.0.1:5000/citas/2/costo-detallado
 
 ###
 
-### Completar la cita con ID 4
-POST http://127.0.0.1:5000/citas/4/completar
+# 6b. Costo con Tarifa de Urgencia
+GET http://127.0.0.1:5000/citas/2/costo-detallado?urgencia=true
 
 ###
 
-### Cancelar la cita con ID 4 (esta fallará si ya está completada)
-POST http://127.0.0.1:5000/citas/4/cancelar
+# 6c. Costo con Impuesto
+GET http://127.0.0.1:5000/citas/2/costo-detallado?impuesto=true
+
+###
+
+# 6d. Costo con Urgencia + Impuesto
+GET http://127.0.0.1:5000/citas/2/costo-detallado?urgencia=true&impuesto=true

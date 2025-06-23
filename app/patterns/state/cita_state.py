@@ -1,14 +1,12 @@
 # app/patterns/state/cita_state.py
-
 from __future__ import annotations
 from abc import ABC, abstractmethod
 
 class CitaState(ABC):
-    # Usamos 'Cita' entre comillas para evitar la importación circular
-    @abstractmethod
-    def solicitar(self, cita: 'Cita'):
-        pass
-
+    """
+    La Interfaz de Estado. Define los métodos que todos los estados concretos
+    deben implementar y que el Contexto (Cita) puede llamar.
+    """
     @abstractmethod
     def confirmar(self, cita: 'Cita'):
         pass
@@ -21,16 +19,12 @@ class CitaState(ABC):
     def completar(self, cita: 'Cita'):
         pass
 
-
-# --- Estados Concretos (ligeramente modificados para usar la referencia adelantada) ---
+# --- Estados Concretos ---
 
 class EstadoSolicitada(CitaState):
-    def solicitar(self, cita: 'Cita'):
-        print("La cita ya ha sido solicitada.")
-
+    """ Implementa el comportamiento para cuando una cita está solicitada. """
     def confirmar(self, cita: 'Cita'):
-        # print("[DEBUG EstadoSolicitada.confirmar] Entrando a confirmar...")  # Print para ver si se llama
-        print("Cita confirmada.")  # Este es el print original que buscamos
+        print("Cita confirmada.")
         cita.transicionar_a(EstadoConfirmada())
 
     def cancelar(self, cita: 'Cita'):
@@ -42,9 +36,7 @@ class EstadoSolicitada(CitaState):
 
 
 class EstadoConfirmada(CitaState):
-    def solicitar(self, cita: 'Cita'):
-        print("No se puede solicitar una cita ya confirmada.")
-
+    """ Implementa el comportamiento para cuando una cita está confirmada. """
     def confirmar(self, cita: 'Cita'):
         print("La cita ya ha sido confirmada.")
 
@@ -58,9 +50,7 @@ class EstadoConfirmada(CitaState):
 
 
 class EstadoCancelada(CitaState):
-    def solicitar(self, cita: 'Cita'):
-        print("No se puede solicitar una cita cancelada.")
-
+    """ Implementa el comportamiento para cuando una cita está cancelada. """
     def confirmar(self, cita: 'Cita'):
         print("No se puede confirmar una cita cancelada.")
 
@@ -72,9 +62,7 @@ class EstadoCancelada(CitaState):
 
 
 class EstadoCompletada(CitaState):
-    def solicitar(self, cita: 'Cita'):
-        print("No se puede solicitar una cita ya completada.")
-
+    """ Implementa el comportamiento para cuando una cita está completada. """
     def confirmar(self, cita: 'Cita'):
         print("No se puede confirmar una cita ya completada.")
 

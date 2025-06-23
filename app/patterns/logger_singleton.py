@@ -2,18 +2,27 @@
 from datetime import datetime, timezone
 
 class Logger:
+    """
+    Implementa el patrón Singleton para asegurar una única instancia del logger
+    en toda la aplicación.
+    """
     _instance = None
 
-    # El método __new__ se llama antes de __init__ y controla la creación de la instancia
     def __new__(cls):
+        """
+        Metodo de creación que controla la instanciación.
+        Si la instancia no existe, la crea. Si ya existe, devuelve la existente.
+        """
         if cls._instance is None:
             print("Creando instancia del Logger...")
             cls._instance = super(Logger, cls).__new__(cls)
-            cls._instance.logs = []
+            # Podríamos inicializar un archivo de log aquí si quisiéramos
         return cls._instance
 
-    def log(self, message):
+    def log(self, message: str):
+        """
+        Registra un mensaje con timestamp en la consola.
+        """
         timestamp = datetime.now(timezone.utc).isoformat()
         log_entry = f"[{timestamp}] - LOG: {message}"
-        self.logs.append(log_entry)
-        print(log_entry) # Imprimimos en la consola para verlo en tiempo real
+        print(log_entry)
