@@ -1,5 +1,5 @@
 # app/__init__.py
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 
 # --- Importaciones Centrales y de Patrones ---
 from .database import db
@@ -49,8 +49,9 @@ def create_app():
 
     @app.route('/')
     def hello_world():
-        logger.log("Se ha accedido a la ruta principal /")
-        return '¡El servidor SIGCAP está funcionando!'
+        logger.log("Se ha accedido a la página principal (frontend).")
+        # Esta función busca 'index.html' en la carpeta 'templates' y lo devuelve
+        return render_template('index.html')
 
     # --- Rutas para Patrones Creacionales (Factory y Builder) ---
 

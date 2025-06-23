@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Plataforma SIGCAP</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <h1>Plataforma de Gestión de Citas SIGCAP</h1>
+
+    <div class="form-container">
+        <h2>Prueba de Fachada: Reserva Completa</h2>
+        <p>Crea un nuevo cliente y su primera cita con una sola llamada.</p>
+        <form id="facade-form">
+            <div class="form-group">
+                <label for="facade-email">Email del Nuevo Cliente:</label>
+                <input type="email" id="facade-email" required>
+            </div>
+            <div class="form-group">
+                <label for="facade-password">Contraseña del Nuevo Cliente:</label>
+                <input type="password" id="facade-password" required>
+            </div>
+            <div class="form-group">
+                <label for="facade-prof-id">ID del Profesional:</label>
+                <input type="text" id="facade-prof-id" value="2" required> </div>
+            <button type="submit">Realizar Reserva Completa</button>
+        </form>
+    </div>
+
+    <div class="form-container">
+        <h2>Prueba de Decorador: Calcular Costo Detallado</h2>
+        <p>Calcula el costo de una cita existente, añadiendo decoradores dinámicamente.</p>
+        <form id="decorator-form">
+            <div class="form-group">
+                <label for="decorator-cita-id">ID de la Cita a Calcular:</label>
+                <input type="text" id="decorator-cita-id" placeholder="Ej: 1, 2, etc." required>
+            </div>
+            <div class="form-group">
+                <input type="checkbox" id="decorator-urgencia">
+                <label for="decorator-urgencia">Añadir Tarifa de Urgencia</label>
+            </div>
+            <div class="form-group">
+                <input type="checkbox" id="decorator-impuesto">
+                <label for="decorator-impuesto">Añadir Impuesto (19%)</label>
+            </div>
+            <button type="submit">Calcular Costo</button>
+        </form>
+    </div>
+
+    <h2>Respuesta de la API</h2>
+    <pre id="response-area"></pre>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
